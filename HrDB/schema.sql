@@ -197,3 +197,52 @@ VALUES
 	('Optional Holiday', '2026-10-20', 'Optional company holiday', TRUE);
 
 SELECT * FROM holidays;
+
+// Company_Settings
+
+CREATE TABLE company_settings (
+    id SERIAL PRIMARY KEY,
+	company_name VARCHAR(200) NOT NULL,
+	company_email VARCHAR(200),
+	company_phone VARCHAR(30),
+	company_address TEXT,
+	working_start_time TIME NOT NULL DEFAULT '09:00:00',
+	working_end_time TIME NOT NULL DEFAULT '18:00:00',
+	late_threshold_minutes INTEGER NOT NULL DEFAULT 15,
+	default_casual_leave INTEGER NOT NULL DEFAULT 1210,
+	default_sick_leave INTEGER NOT NULL DEFAULT 15,
+	default_earned_leave INTEGER NOT NULL DEFAULT 15,
+	password_min_length INTEGER NOT NULL DEFAULT 6,
+	company_logo TEXT,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO company_settings (
+    company_name,
+    company_email,
+    company_phone,
+    company_address,
+    working_start_time,
+    working_end_time,
+    late_threshold_minutes,
+    default_casual_leave,
+    default_sick_leave,
+    default_earned_leave,
+    password_min_length
+)
+VALUES (
+    'HRMS Demo Company',
+    'admin@hrms.com',
+    '9876543210',
+    'Hyderabad, India',
+    '09:00:00',
+    '18:00:00',
+    15,
+    12,
+    10,
+    15,
+    6
+);
+
+SELECT * FROM company_settings;
