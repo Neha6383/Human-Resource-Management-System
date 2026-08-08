@@ -83,3 +83,36 @@ CREATE TABLE employees (
 	CONSTRAINT chk_employee_gender
 	    CHECK (gender IN ('Male', 'Female', 'Other'))
 );
+
+
+// Attendance 
+
+CREATE TABLE attendance (
+    id SERIAL PRIMARY KEY,
+	employee_id INTEGER NOT NULL,
+	attendance_date DATE,
+	check_in TIMESTAMP,
+	check_out TIMESTAMP,
+	working_hours DECIMAL(5,2),
+	status VARCHAR(20) NOT NULL DEFAULT 'Present',
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+	CONSTRAINT fk_attendance_employee
+	    FOREIGN KEY (employee_id)
+		REFERENCES employees(id),
+
+	CONSTRAINT chk_attendance_status
+	    CHECK (
+            status IN (
+                'Present',
+				'Absent',
+				'Late',
+				'Half Day',
+				'Holiday'
+			)
+		),
+
+	CONSTRAINT unique_employee_attendance
+	    UNIQUE (employee_id, attendance_date)
+);
