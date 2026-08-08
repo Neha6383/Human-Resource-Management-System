@@ -1,11 +1,25 @@
+require("dotenv").config();
+
 const express = require("express");
+const pool = require("./config/db");
 
 const app = express();
 
-const PORT = 5000
+const PORT = process.env.PORT || 5000
+
+app.use(express.json());
 
 app.get("/", (req, res) => {
     res.send("HRMS backend is running...");
+});
+
+pool.query("SELECT NOW()", (error, result) => {
+    if(error) {
+        console.log("Database connection failed:", error);
+    } else {
+        console.log("Database connected successdully.");
+        console.log("Database time:", result.rows[0]);
+    }
 });
 
 app.listen(PORT, () => {
