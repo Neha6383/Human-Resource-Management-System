@@ -46,3 +46,40 @@ VALUES
 	('Support', 'Customer and Technical Support Department');
 
 SELECT * FROM departments;    
+
+// Employees
+
+CREATE TABLE employees (
+    id SERIAL PRIMARY KEY,
+	employee_id VARCHAR(20) NOT NULL UNIQUE,
+	user_id INTEGER UNIQUE,
+	full_name VARCHAR(100) NOT NULL,
+	phone VARCHAR(20),
+	gender VARCHAR(20),
+	date_of_birth DATE,
+	department_id INTEGER NOT NULL,
+	designation VARCHAR(100),
+	joining_date DATE NOT NULL,
+	manager_id INTEGER,
+	employment_status VARCHAR(20) NOT NULL DEFAULT 'Active',
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+	CONSTRAINT fk_employee_user
+	    FOREIGN KEY (user_id)
+	    REFERENCES users(id),
+
+	CONSTRAINT fk_employee_department
+	    FOREIGN KEY (department_id)
+	    REFERENCES departments(id),
+
+	CONSTRAINT fk_employee_manager
+	    FOREIGN KEY (manager_id)
+	    REFERENCES employees(id),
+
+	CONSTRAINT chk_employee_status
+	    CHECK (employment_status IN ('Active', 'Inactive', 'Resigned')),
+
+	CONSTRAINT chk_employee_gender
+	    CHECK (gender IN ('Male', 'Female', 'Other'))
+);
