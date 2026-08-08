@@ -161,3 +161,19 @@ CREATE TABLE leave_requests (
 	CONSTRAINT chk_leave_dates
 	    CHECK (end_date >= start_date)
 );
+
+// Notifications
+
+CREATE TABLE notifications (
+    id SERIAL PRIMARY KEY,
+	user_id INTEGER NOT NULL,
+	title VARCHAR(200) NOT NULL,
+	message TEXT NOT NULL,
+	type VARCHAR(50),
+	is_read BOOLEAN NOT NULL DEFAULT FALSE,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+	CONSTRAINT fk_notification_user
+	    FOREIGN KEY (user_id)
+		REFERENCES users(id)
+);
