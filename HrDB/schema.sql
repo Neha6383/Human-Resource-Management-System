@@ -177,3 +177,23 @@ CREATE TABLE notifications (
 	    FOREIGN KEY (user_id)
 		REFERENCES users(id)
 );
+
+// Holidays
+
+CREATE TABLE holidays (
+    id SERIAL PRIMARY KEY,
+	name VARCHAR(150) NOT NULL,
+	holiday_date DATE NOT NULL UNIQUE,
+	description TEXT,
+	is_optional BOOLEAN NOT NULL DEFAULT FALSE,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+INSERT INTO holidays (name, holiday_date, description, is_optional)
+VALUES
+    ('Independence Day', '2026-08-15', 'Indian Independence Day', FALSE),
+	('Republic Day', '2027-01-26', 'Indian Republic Day', FALSE),
+	('Optional Holiday', '2026-10-20', 'Optional company holiday', TRUE);
+
+SELECT * FROM holidays;
