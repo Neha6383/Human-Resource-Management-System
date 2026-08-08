@@ -116,3 +116,48 @@ CREATE TABLE attendance (
 	CONSTRAINT unique_employee_attendance
 	    UNIQUE (employee_id, attendance_date)
 );
+
+//Leave_Requests
+
+CREATE TABLE leave_requests (
+    id SERIAL PRIMARY KEY,
+	employee_id INTEGER NOT NULL,
+	leave_type VARCHAR(30) NOT NULL,
+	start_date DATE NOT NULL,
+	end_date DATE NOT NULL,
+	reason TEXT,
+	status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+	reviewed_by INTEGER,
+	reviewed_at TIMESTAMP,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+	CONSTRAINT fk_leave_employee
+	    FOREIGN KEY (employee_id)
+		REFERENCES employees(id),
+
+    CONSTRAINT fk_leave_reviewer
+	    FOREIGN KEY (reviewed_by)
+		REFERENCES users(id),
+
+	CONSTRAINT chk_leave_type
+	    CHECK (
+            leave_type IN (
+                'Casual Leave',
+				'Sick Leave',
+				'Earned Leave'
+			)
+		),
+
+	CONSTRAINT chk_leave_status
+	    CHECK (
+            status IN (
+                'Pending',
+				'Approved',
+				'Rejected'
+			)
+		),
+
+	CONSTRAINT chk_leave_dates
+	    CHECK (end_date >= start_date)
+);
