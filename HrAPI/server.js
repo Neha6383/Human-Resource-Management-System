@@ -4,6 +4,7 @@ const express = require("express");
 const pool = require("./config/db");
 
 const roleRoutes = require("./routes/roleRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/roles", roleRoutes);
+app.use("/api/auth", authRoutes);
 
 pool.query("SELECT NOW()", (error, result) => {
     if(error) {
