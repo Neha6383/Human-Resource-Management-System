@@ -1,7 +1,9 @@
 const express = require("express");
 
 const {
-    getEmployees
+    getEmployees,
+    createEmployee,
+    getEmployeeById
 } = require("../controllers/employeeController");
 
 const {
@@ -16,6 +18,20 @@ router.get(
     authenticateToken,
     authorizeRoles("Admin", "HR"),
     getEmployees
+);
+
+router.get(
+    "/:id",
+    authenticateToken,
+    authorizeRoles("Admin", "HR"),
+    getEmployeeById
+);
+
+router.post(
+    "/",
+    authenticateToken,
+    authorizeRoles("Admin", "HR"),
+    createEmployee
 );
 
 module.exports = router;
