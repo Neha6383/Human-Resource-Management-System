@@ -5,37 +5,57 @@ const pool = require("../config/db");
 
 const seedAdmin = async () => {
     try {
-        const email = "admin@hrms.com";
-        const password = "Admin@123";
+        const users = [
+            {
+                email: "admin@hrms.com",
+                password: "Admin@123",
+                role: "Admin"
+            },
+            {
+                email: "hr@hrms.com",
+                password: "Hr@123",
+                role: "HR"
+            },
+            {
+                email: "employee@hrms.com",
+                password: "Employee@123",
+                role: "Employee"
+            }
+        ];
 
-        // Find Admin role
-        const roleResult = await pool.query(
+        for (const user of users) {
+
+            // Find role
+            const roleResult = await pool.query(
             "SELECT id FROM roles WHERE name = $1",
-            ["Admin"]
+            [user.role]
         );
 
         if (roleResult.rows.length === 0) {
-            console.log("Admin role not found.");
-            return;
+            console.log(`Role ${user.role} not found.`);
+            continue;
         }
 
         const roleId = roleResult.rows[0].id;
 
-        // Check whether admin already exists
-        const userResult = await pool.query(
+        // Check whether user already exists
+        const existingUser = await pool.query(
             "SELECT id FROM users WHERE email = $1",
-            [email]
+            [user.email]
         );
 
-        if (userResult.rows.length > 0) {
-            console.log("Admin user already exists.");
-            return;
+        if (existingUser.rows.length > 0) {
+            console.log(`${user.email} already exists.`);
+            continue;
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, 10);
+        const hashedPassword = await bcrypt.hash(
+            user.password, 
+            10
+        );
 
-        // Insert admin user
+        // Create user
         await pool.query(
             `
             INSERT INTO users (
@@ -45,15 +65,21 @@ const seedAdmin = async () => {
             )
             VALUES ($1, $2, $3)
             `,
-            [email, hashedPassword, roleId]
+            [
+                user.email, 
+                hashedPassword, 
+                roleId
+            ]
         );
 
-        console.log("Admin user created successfully.");
-        console.log("Email:", email);
-        console.log("Password:", password);
+        console.log(
+            `${user.role} user created: ${user.email}`
+        );
+
+        }
 
     } catch (error) {
-        console.error("Error creating admin user:", error);
+        console.error("Error sending users:", error);
     } finally {
         await pool.end();
     }
