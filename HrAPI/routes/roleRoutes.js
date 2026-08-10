@@ -4,8 +4,13 @@ const {
     getRoles
 } = require("../controllers/roleController");
 
+const {
+    authentication,
+    authenticateToken
+} = require("../middleware/authMiddleware")
+
 const router = express.Router();
 
-router.get("/", getRoles);
+router.get("/", authenticateToken, getRoles);
 
 module.exports = router;
