@@ -296,10 +296,111 @@ const getRolePermissions = async (req, res) => {
     }
 };
 
+// Update permissions for a role
+const updateRolePermissions = async (req, res) => {
+    const client = await pool.connect();
+
+    try {
+        const { id } = req.params;
+        const { permissionIds } = req.body;
+
+        // Validate permissionIds
+        if (!Array.isArray(permissionIds)) {
+            return res.status(400).json({
+                message: "permissionIds must be an array"
+            });
+        }
+
+        // Check whether role exists
+        const roleResult = await client.query(
+            `
+            SELECT id, name
+            FROM roles
+            WHERE id = $1;
+            `,
+            [id]
+        );
+
+        if (roleResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "Role not found"
+            });
+        }
+
+        // Validate permission IDs
+        if (permissionIds.length > 0) {
+            const permissionResult = await client.query(
+                `
+                SELECT id
+                FROM permissions
+                WHERE id = ANY($1::int[]);
+                `,
+                [permissionIds]
+            );
+
+            if (permissionResult.rows.length !== permissionIds.length) {
+                return res.status(400).json({
+                    message: "One or more permission IDs are invalid"
+                });
+            }
+        }
+
+        // Start transaction
+        await client.query("BEGIN");
+
+        // Remove existing permissions
+        await client.query(
+            `
+            DELETE FROM role_permissions
+            WHERE role_id = $1;
+            `,
+            [id]
+        );
+
+        // Add selected permissions
+        for (const permissionId of permissionIds) {
+            await client.query(
+                `
+                INSERT INTO role_permissions
+                    (role_id, permission_id)
+                VALUES
+                    ($1, $2);
+                `,
+                [id, permissionId]
+            );
+        }
+
+        await client.query("COMMIT");
+
+        res.status(200).json({
+            message: "Role permissions updated successfully",
+            role: roleResult.rows[0],
+            permissionIds
+        });
+
+    } catch (error) {
+
+        await client.query("ROLLBACK");
+
+        console.error(
+            "Error updating role permissions:",
+            error
+        );
+
+        res.status(500).json({
+            message: "Failed to update role permissions"
+        });
+
+    } finally {
+        client.release();
+    }
+};
+
 module.exports = {
     getRoles,
     getRoleById,
     createRole,
     updateRole,
-    getRolePermissions
+    getRolePermissions,
+    updateRolePermissions
 };

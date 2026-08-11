@@ -5,7 +5,8 @@ const {
     getRoleById,
     createRole,
     updateRole,
-    getRolePermissions
+    getRolePermissions,
+    updateRolePermissions
 } = require("../controllers/roleController");
 
 
@@ -105,6 +106,48 @@ router.post("/", createRole);
  */
 
 router.get("/:id/permissions", getRolePermissions);
+
+/**
+ * @swagger
+ * /api/roles/{id}/permissions:
+ *   put:
+ *     summary: Update permissions for a role
+ *     description: Replaces the existing permissions of a role with the supplied permission IDs.
+ *     tags:
+ *       - Role Management
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 2
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - permissionIds
+ *             properties:
+ *               permissionIds:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 example: [1, 2, 3, 5]
+ *     responses:
+ *       200:
+ *         description: Role permissions updated successfully
+ *       400:
+ *         description: Invalid permission IDs
+ *       404:
+ *         description: Role not found
+ *       500:
+ *         description: Failed to update role permissions
+ */
+
+router.put("/:id/permissions", updateRolePermissions);
 
 /**
  * @swagger
