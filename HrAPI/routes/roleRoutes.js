@@ -6,7 +6,9 @@ const {
     createRole,
     updateRole,
     getRolePermissions,
-    updateRolePermissions
+    updateRolePermissions,
+    updateUserRole,
+    getUsersWithRoles
 } = require("../controllers/roleController");
 
 
@@ -148,6 +150,82 @@ router.get("/:id/permissions", getRolePermissions);
  */
 
 router.put("/:id/permissions", updateRolePermissions);
+
+/**
+ * @swagger
+ * /api/roles/users/{userId}:
+ *   put:
+ *     summary: Update the role assigned to a user
+ *     tags:
+ *       - Role Management
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         description: ID of the user
+ *         example: 3
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - roleId
+ *             properties:
+ *               roleId:
+ *                 type: integer
+ *                 description: ID of the role to assign
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: User role updated successfully
+ *       400:
+ *         description: roleId is required
+ *       404:
+ *         description: User or role not found
+ *       500:
+ *         description: Failed to update user role
+ */
+
+router.put("/users/:userId", updateUserRole);
+
+/**
+ * @swagger
+ * /api/roles/users:
+ *   get:
+ *     summary: Get all users with their assigned roles
+ *     tags:
+ *       - Role Management
+ *     responses:
+ *       200:
+ *         description: Users with assigned roles retrieved successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                     example: 1
+ *                   email:
+ *                     type: string
+ *                     example: admin@hrms.com
+ *                   role_id:
+ *                     type: integer
+ *                     example: 1
+ *                   role:
+ *                     type: string
+ *                     example: Admin
+ *       500:
+ *         description: Failed to fetch users with roles
+ */
+
+router.get("/users", getUsersWithRoles);
 
 /**
  * @swagger

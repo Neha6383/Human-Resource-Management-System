@@ -396,11 +396,111 @@ const updateRolePermissions = async (req, res) => {
     }
 };
 
+// Update role assigned to a user
+const updateUserRole = async (req, res) => {
+    try {
+        const { userId } = req.params;
+        const { roleId } = req.body;
+
+        // Validate roleId
+        if (!roleId) {
+            return res.status(400).json({
+                message: "roleId is required"
+            });
+        }
+
+        // Check whether user exists
+        const userResult = await pool.query(
+            `
+            SELECT id, email, role_id
+            FROM users
+            WHERE id = $1
+            `,
+            [userId]
+        );
+
+        if (userResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "User not found"
+            });
+        }
+
+        // Check whether role exists
+        const roleResult = await pool.query(
+            `
+            SELECT id, name
+            FROM roles
+            WHERE id = $1
+            `,
+            [roleId]
+        );
+
+        if (roleResult.rows.length === 0) {
+            return res.status(404).json({
+                message: "Role not found"
+            });
+        }
+
+        // Update user's role
+        await pool.query(
+            `
+            UPDATE users
+            SET role_id = $1
+            WHERE id = $2
+            `,
+            [roleId, userId]
+        );
+
+        res.status(200).json({
+            message: "User role updated successfully",
+            user: {
+                id: userResult.rows[0].id,
+                email: userResult.rows[0].email,
+                role: roleResult.rows[0].name
+            }
+        });
+
+    } catch (error) {
+        console.error("Error updating user role:", error);
+
+        res.status(500).json({
+            message: "Failed to update user role"
+        });
+    }
+};
+
+// Get all users with their assigned roles
+const getUsersWithRoles = async (req, res) => {
+    try {
+        const result = await pool.query(`
+            SELECT 
+                u.id,
+                u.email,
+                u.role_id,
+                r.name AS role
+            FROM users u
+            LEFT JOIN roles r
+                ON u.role_id = r.id
+            ORDER BY u.id;        
+            `);
+        
+        res.status(200).json(result.rows);    
+    } catch (error) {
+        console.error("Error fetching users with roles:", error);
+
+        res.status(500).json({
+            message: "Failed to fetch users with roles"
+        });  
+    }
+};
+
 module.exports = {
     getRoles,
     getRoleById,
     createRole,
     updateRole,
     getRolePermissions,
-    updateRolePermissions
+    updateRolePermissions,
+    updateUserRole,
+    getUsersWithRoles
 };
