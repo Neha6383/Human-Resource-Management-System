@@ -3,7 +3,8 @@ const express = require("express");
 const {
     getEmployees,
     createEmployee,
-    getEmployeeById
+    getEmployeeById,
+    updateEmployee
 } = require("../controllers/employeeController");
 
 const {
@@ -32,6 +33,13 @@ router.post(
     authenticateToken,
     authorizeRoles("Admin", "HR"),
     createEmployee
+);
+
+router.put(
+    "/:id",
+    authenticateToken,
+    authorizeRoles("Admin", "HR"),
+    updateEmployee
 );
 
 module.exports = router;
