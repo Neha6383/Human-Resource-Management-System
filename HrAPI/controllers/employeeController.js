@@ -11,6 +11,7 @@ const getEmployees = async (req, res) => {
                 e.phone,
                 e.gender,
                 e.date_of_birth,
+                e.department_id,
                 d.name AS department,
                 e.designation,
                 e.joining_date,
@@ -36,18 +37,23 @@ const getEmployees = async (req, res) => {
 
 const getEmployeeById = async (req, res) => {
     try {
+
         const { id } = req.params;
+
+        console.log("GET EMPLOYEE ID:", id);
 
         const result = await pool.query(
             `
             SELECT
                 e.id,
                 e.employee_id,
+                e.user_id,
                 e.full_name,
                 u.email,
                 e.phone,
                 e.gender,
                 e.date_of_birth,
+                e.department_id,
                 d.name AS department,
                 e.designation,
                 e.joining_date,
@@ -66,19 +72,33 @@ const getEmployeeById = async (req, res) => {
         );
 
         if (result.rows.length === 0) {
+
             return res.status(404).json({
                 message: "Employee not found"
             });
+
         }
 
-        res.status(200).json(result.rows[0]);
+        console.log(
+            "GET EMPLOYEE RESULT:",
+            result.rows[0]
+        );
+
+        res.status(200).json(
+            result.rows[0]
+        );
 
     } catch (error) {
-        console.error("Error fetching employee:", error);
+
+        console.error(
+            "Error fetching employee:",
+            error
+        );
 
         res.status(500).json({
             message: "Failed to fetch employee"
         });
+
     }
 };
 
@@ -521,6 +541,30 @@ const updateEmployee = async (req, res) => {
                 id
             ]
         );
+
+        console.log("UPDATE EMPLOYEE ID:", id);
+
+console.log(
+    "UPDATED EMPLOYEE:",
+    updatedEmployee.rows[0]
+);
+
+console.log(
+    "FORM DATA USED FOR UPDATE:",
+    {
+        employee_id,
+        email,
+        full_name,
+        phone,
+        gender,
+        date_of_birth,
+        department_id,
+        designation,
+        joining_date,
+        manager_id,
+        employment_status
+    }
+);
 
 
         // ==============================

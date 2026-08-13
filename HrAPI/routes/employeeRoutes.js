@@ -14,12 +14,22 @@ const {
 
 const router = express.Router();
 
+
+// ==========================================
+// GET ALL EMPLOYEES
+// ==========================================
+
 router.get(
     "/",
     authenticateToken,
     authorizeRoles("Admin", "HR"),
     getEmployees
 );
+
+
+// ==========================================
+// GET EMPLOYEE BY ID
+// ==========================================
 
 router.get(
     "/:id",
@@ -28,6 +38,11 @@ router.get(
     getEmployeeById
 );
 
+
+// ==========================================
+// CREATE EMPLOYEE
+// ==========================================
+
 router.post(
     "/",
     authenticateToken,
@@ -35,11 +50,17 @@ router.post(
     createEmployee
 );
 
+
+// ==========================================
+// UPDATE EMPLOYEE
+// ==========================================
+
 router.put(
     "/:id",
     authenticateToken,
     authorizeRoles("Admin", "HR"),
     updateEmployee
 );
+
 
 module.exports = router;
