@@ -1,4 +1,4 @@
-// Roles
+-- Roles
 
 CREATE TABLE roles(
     id SERIAL PRIMARY KEY,
@@ -12,7 +12,7 @@ VALUES
     ('HR'),
     ('Employee');
 
-// Users
+-- Users
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -26,7 +26,7 @@ CREATE TABLE users (
 		REFERENCES roles(id)
 );
 
-// Departments
+-- Departments
 
 CREATE TABLE departments (
     id SERIAL PRIMARY KEY,
@@ -47,7 +47,7 @@ VALUES
 
 SELECT * FROM departments;    
 
-// Employees
+-- Employees
 
 CREATE TABLE employees (
     id SERIAL PRIMARY KEY,
@@ -85,7 +85,7 @@ CREATE TABLE employees (
 );
 
 
-// Attendance 
+-- Attendance 
 
 CREATE TABLE attendance (
     id SERIAL PRIMARY KEY,
@@ -117,7 +117,7 @@ CREATE TABLE attendance (
 	    UNIQUE (employee_id, attendance_date)
 );
 
-//Leave_Requests
+--Leave_Requests
 
 CREATE TABLE leave_requests (
     id SERIAL PRIMARY KEY,
@@ -162,7 +162,7 @@ CREATE TABLE leave_requests (
 	    CHECK (end_date >= start_date)
 );
 
-// Notifications
+-- Notifications
 
 CREATE TABLE notifications (
     id SERIAL PRIMARY KEY,
@@ -178,7 +178,7 @@ CREATE TABLE notifications (
 		REFERENCES users(id)
 );
 
-// Holidays
+-- Holidays
 
 CREATE TABLE holidays (
     id SERIAL PRIMARY KEY,
@@ -198,7 +198,7 @@ VALUES
 
 SELECT * FROM holidays;
 
-// Company_Settings
+-- Company_Settings
 
 CREATE TABLE company_settings (
     id SERIAL PRIMARY KEY,
