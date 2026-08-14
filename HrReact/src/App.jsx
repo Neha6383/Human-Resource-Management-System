@@ -8,6 +8,11 @@ import HRDashboard from './pages/HRDashboard'
 import EmployeeDashboard from './pages/EmployeeDashboard'
 import Unauthorized from './pages/Unauthorized'
 import RoleManagement from './pages/RoleManagement'
+import EmployeeManagement from "./pages/EmployeeManagement";
+import AddEmployee from "./pages/AddEmployee";
+import EmployeeDetails from "./pages/EmployeeDetails";
+import EditEmployee from "./pages/EditEmployee";
+import DepartmentManagement from "./pages/DepartmentManagement";
 
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -34,6 +39,42 @@ function App() {
             </ProtectedRoute>
           }
        />
+
+<Route
+    path="/employees"
+    element={
+        <ProtectedRoute allowedRoles={["Admin", "HR"]}>
+            <EmployeeManagement />
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/employees/:id"
+    element={
+        <ProtectedRoute allowedRoles={["Admin", "HR"]}>
+            <EmployeeDetails />
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/employees/add"
+    element={
+        <ProtectedRoute allowedRoles={["Admin", "HR"]}>
+            <AddEmployee />
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/employees/edit/:id"
+    element={
+        <ProtectedRoute allowedRoles={["Admin", "HR"]}>
+            <EditEmployee />
+        </ProtectedRoute>
+    }
+/>
 
        {/* HR Dashboard */}
 
@@ -71,10 +112,26 @@ function App() {
 
                 <Route
     path="/roles"
-    element={<RoleManagement />}
+    element={
+        <ProtectedRoute allowedRoles={["Admin"]}>
+            <RoleManagement />
+        </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/departments"
+    element={
+        <ProtectedRoute
+            allowedRoles={["Admin", "HR"]}
+        >
+            <DepartmentManagement />
+        </ProtectedRoute>
+    }
 />
                 
     </Routes>
+    
 
     </BrowserRouter>
     
