@@ -12,6 +12,8 @@ const login = async (req, res) => {
             });
         }
 
+        console.log("LOGIN ATTEMPT", { email, dbPasswordType: typeof process.env.DB_PASSWORD, secretDefined: !!process.env.JWT_SECRET });
+
         const result = await pool.query(
             `
             SELECT
@@ -26,6 +28,8 @@ const login = async (req, res) => {
             `,
             [email]
         );
+
+        console.log("LOGIN QUERY RESULT", result.rows);
 
         if (result.rows.length === 0) {
             return res.status(401).json({

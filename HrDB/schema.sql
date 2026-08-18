@@ -12,6 +12,54 @@ VALUES
     ('HR'),
     ('Employee');
 
+-- Permissions
+
+CREATE TABLE permissions (
+    id SERIAL PRIMARY KEY,
+    module VARCHAR(100) NOT NULL,
+    feature VARCHAR(150) NOT NULL,
+    action VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (module, feature, action)
+);
+
+CREATE TABLE role_permissions (
+    id SERIAL PRIMARY KEY,
+    role_id INTEGER NOT NULL,
+    permission_id INTEGER NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_role_permissions_role
+        FOREIGN KEY (role_id)
+        REFERENCES roles(id),
+    CONSTRAINT fk_role_permissions_permission
+        FOREIGN KEY (permission_id)
+        REFERENCES permissions(id),
+    UNIQUE (role_id, permission_id)
+);
+
+INSERT INTO permissions (module, feature, action)
+VALUES
+    ('Authentication', 'Login', 'View'),
+    ('Authentication', 'Login', 'Manage'),
+    ('Employees', 'Employee Management', 'Create'),
+    ('Employees', 'Employee Management', 'Read'),
+    ('Employees', 'Employee Management', 'Update'),
+    ('Employees', 'Employee Management', 'Delete'),
+    ('Departments', 'Department Management', 'Create'),
+    ('Departments', 'Department Management', 'Read'),
+    ('Departments', 'Department Management', 'Update'),
+    ('Departments', 'Department Management', 'Delete'),
+    ('Attendance', 'Attendance Tracking', 'Create'),
+    ('Attendance', 'Attendance Tracking', 'Read'),
+    ('Attendance', 'Attendance Tracking', 'Update'),
+    ('Attendance', 'Attendance Tracking', 'Delete'),
+    ('Leaves', 'Leave Management', 'Create'),
+    ('Leaves', 'Leave Management', 'Read'),
+    ('Leaves', 'Leave Management', 'Update'),
+    ('Leaves', 'Leave Management', 'Delete'),
+    ('Reports', 'Report Generation', 'Read'),
+    ('Roles', 'Role Management', 'Manage');
+
 -- Users
 
 CREATE TABLE users (

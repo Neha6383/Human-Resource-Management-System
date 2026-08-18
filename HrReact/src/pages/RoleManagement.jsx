@@ -36,6 +36,8 @@ function RoleManagement() {
 
     const [permissions, setPermissions] = useState([]);
 
+    const [selectedPermissions, setSelectedPermissions] = useState([]);
+
     const [permissionLoading, setPermissionLoading] = useState(false);
 
     const [permissionSaving, setPermissionSaving] = useState(false);
@@ -114,47 +116,50 @@ function RoleManagement() {
 
     const handleRoleSelect = async (roleId) => {
 
-    setSelectedRole(roleId);
+        setSelectedRole(roleId);
 
-    if (!roleId) {
-        setPermissions([]);
-        setSelectedPermissions([]);
-        return;
-    }
+        if (!roleId) {
+            setPermissions([]);
+            setSelectedPermissions([]);
+            return;
+        }
 
-    try {
+        try {
 
-        setPermissionLoading(true);
-        setError("");
+            setPermissionLoading(true);
+            setError("");
 
-        const data = await getRolePermissions(roleId);
+            const data = await getRolePermissions(roleId);
+            const permissionList = Array.isArray(data?.permissions)
+                ? data.permissions
+                : Array.isArray(data)
+                    ? data
+                    : [];
 
-        setPermissions(data);
+            setPermissions(permissionList);
 
-        const enabledPermissionIds = data
-            .filter((permission) => permission.assigned)
-            .map((permission) => permission.id);
+            const enabledPermissionIds = permissionList
+                .filter((permission) => permission.enabled ?? permission.assigned ?? false)
+                .map((permission) => permission.id);
 
-        setSelectedPermissions(
-            enabledPermissionIds
-        );
+            setSelectedPermissions(enabledPermissionIds);
 
-    } catch (error) {
+        } catch (error) {
 
-        console.error(
-            "Error loading permissions:",
-            error
-        );
+            console.error(
+                "Error loading permissions:",
+                error
+            );
 
-        setError(
-            "Unable to load role permissions."
-        );
+            setError(
+                "Unable to load role permissions."
+            );
 
-    } finally {
+        } finally {
 
-        setPermissionLoading(false);
-    }
-};
+            setPermissionLoading(false);
+        }
+    };
 
 const handlePermissionChange = (permissionId) => {
 

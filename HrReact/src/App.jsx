@@ -13,6 +13,8 @@ import AddEmployee from "./pages/AddEmployee";
 import EmployeeDetails from "./pages/EmployeeDetails";
 import EditEmployee from "./pages/EditEmployee";
 import DepartmentManagement from "./pages/DepartmentManagement";
+import EmployeeAttendance from './pages/EmployeeAttendance'
+import EmployeeProfile from './pages/EmployeeProfile'
 
 import ProtectedRoute from './components/ProtectedRoute'
 
@@ -127,6 +129,20 @@ function App() {
         >
             <DepartmentManagement />
         </ProtectedRoute>
+    }
+/>
+
+<Route
+    path="/employee/attendance"
+    element={
+        <EmployeeAttendance />
+    }
+/>
+
+<Route
+    path="/employee/profile"
+    element={
+        <EmployeeProfile />
     }
 />
                 

@@ -102,6 +102,88 @@ const getEmployeeById = async (req, res) => {
     }
 };
 
+// ======================================================
+// GET LOGGED-IN EMPLOYEE PROFILE
+// ======================================================
+
+const getMyProfile = async (req, res) => {
+
+    try {
+
+        // userId comes from the JWT
+        const userId = req.user.userId;
+
+
+        if (!userId) {
+
+            return res.status(401).json({
+                message: "User ID not found in token"
+            });
+
+        }
+
+
+        const result = await pool.query(
+            `
+            SELECT
+                e.id,
+                e.employee_id,
+                e.user_id,
+                e.full_name,
+                u.email,
+                e.phone,
+                e.gender,
+                e.date_of_birth,
+                e.department_id,
+                d.name AS department,
+                e.designation,
+                e.joining_date,
+                e.manager_id,
+                e.employment_status,
+                e.created_at,
+                e.updated_at
+            FROM employees e
+            LEFT JOIN users u
+                ON e.user_id = u.id
+            LEFT JOIN departments d
+                ON e.department_id = d.id
+            WHERE e.user_id = $1
+            `,
+            [userId]
+        );
+
+
+        if (result.rows.length === 0) {
+
+            return res.status(404).json({
+                message: "Employee profile not found"
+            });
+
+        }
+
+
+        return res.status(200).json({
+            employee: result.rows[0]
+        });
+
+
+    } catch (error) {
+
+        console.error(
+            "Error fetching employee profile:",
+            error
+        );
+
+
+        return res.status(500).json({
+            message:
+                "Failed to fetch employee profile"
+        });
+
+    }
+
+};
+
 const createEmployee = async (req, res) => {
     const client = await pool.connect();
 
@@ -614,6 +696,7 @@ console.log(
 module.exports = {
     getEmployees,
     getEmployeeById,
+    getMyProfile,
     createEmployee,
     updateEmployee
 };

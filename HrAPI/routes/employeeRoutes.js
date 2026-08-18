@@ -4,6 +4,7 @@ const {
     getEmployees,
     createEmployee,
     getEmployeeById,
+    getMyProfile,
     updateEmployee
 } = require("../controllers/employeeController");
 
@@ -26,6 +27,16 @@ router.get(
     getEmployees
 );
 
+// ======================================================
+// GET MY PROFILE
+// ======================================================
+
+router.get(
+    "/my-profile",
+    authenticateToken,
+    authorizeRoles("Employee"),
+    getMyProfile
+);
 
 // ==========================================
 // GET EMPLOYEE BY ID

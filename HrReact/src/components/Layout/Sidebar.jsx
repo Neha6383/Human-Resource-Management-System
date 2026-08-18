@@ -16,7 +16,8 @@ import {
     Business,
     EventAvailable,
     EventNote,
-    Security
+    Security,
+    AccountCircle
 } from "@mui/icons-material";
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -34,58 +35,137 @@ function Sidebar({
 
     const location = useLocation();
 
+
+    // ======================================================
+    // GET LOGGED-IN USER
+    // ======================================================
+
     const user = JSON.parse(
         localStorage.getItem("user")
     );
 
 
+    const role = user?.role;
+
+
+    // ======================================================
+    // DASHBOARD PATH
+    // ======================================================
+
+    const dashboardPath =
+        role === "Admin"
+            ? "/admin/dashboard"
+            : role === "HR"
+                ? "/hr/dashboard"
+                : "/employee/dashboard";
+
+
+    // ======================================================
+    // MENU ITEMS
+    // ======================================================
+
     const menuItems = [
-    {
-        label: "Dashboard",
-        icon: <Dashboard />,
-        path:
-            user?.role === "Admin"
-                ? "/admin/dashboard"
-                : user?.role === "HR"
-                    ? "/hr/dashboard"
-                    : "/employee/dashboard"
-    },
 
-    {
-        label: "Employees",
-        icon: <People />,
-        path: "/employees"
-    },
+        // ==================================================
+        // DASHBOARD
+        // ==================================================
 
-    {
-        label: "Departments",
-        icon: <Business />,
-        path: "/departments"
-    },
+        {
+            label: "Dashboard",
+            icon: <Dashboard />,
+            path: dashboardPath
+        },
 
-    {
-        label: "Attendance",
-        icon: <EventAvailable />,
-        path: "/attendance"
-    },
 
-    {
-        label: "Leaves",
-        icon: <EventNote />,
-        path: "/leave"
-    },
+        // ==================================================
+        // EMPLOYEES
+        // ADMIN + HR ONLY
+        // ==================================================
 
-    ...(user?.role === "Admin"
-        ? [
-            {
-                label: "Roles",
-                icon: <Security />,
-                path: "/roles"
-            }
-        ]
-        : [])
-];
+        ...(role === "Admin" || role === "HR"
+            ? [
+                {
+                    label: "Employees",
+                    icon: <People />,
+                    path: "/employees"
+                }
+            ]
+            : []),
 
+
+        // ==================================================
+        // DEPARTMENTS
+        // ADMIN + HR ONLY
+        // ==================================================
+
+        ...(role === "Admin" || role === "HR"
+            ? [
+                {
+                    label: "Departments",
+                    icon: <Business />,
+                    path: "/departments"
+                }
+            ]
+            : []),
+
+
+        // ==================================================
+        // ATTENDANCE
+        // ==================================================
+
+        {
+            label: "Attendance",
+            icon: <EventAvailable />,
+            path: "/employee/attendance"
+        },
+
+        // ==================================================
+// PROFILE
+// EMPLOYEE ONLY
+// ==================================================
+
+...(role === "Employee"
+    ? [
+        {
+            label: "Profile",
+            icon: <AccountCircle />,
+            path: "/employee/profile"
+        }
+    ]
+    : []),
+
+        // ==================================================
+        // LEAVES
+        // ==================================================
+
+        {
+            label: "Leaves",
+            icon: <EventNote />,
+            path: "/leave"
+        },
+
+
+        // ==================================================
+        // ROLES
+        // ADMIN ONLY
+        // ==================================================
+
+        ...(role === "Admin"
+            ? [
+                {
+                    label: "Roles",
+                    icon: <Security />,
+                    path: "/roles"
+                }
+            ]
+            : [])
+
+    ];
+
+
+    // ======================================================
+    // DRAWER CONTENT
+    // ======================================================
 
     const drawerContent = (
 
@@ -94,6 +174,7 @@ function Sidebar({
             <Toolbar />
 
             <Divider />
+
 
             <List>
 
@@ -121,6 +202,7 @@ function Sidebar({
                                 {item.icon}
                             </ListItemIcon>
 
+
                             <ListItemText
                                 primary={item.label}
                             />
@@ -134,14 +216,21 @@ function Sidebar({
             </List>
 
         </Box>
+
     );
 
+
+    // ======================================================
+    // SIDEBAR
+    // ======================================================
 
     return (
 
         <>
 
-            {/* Desktop sidebar */}
+            {/* ==============================================
+                DESKTOP SIDEBAR
+            ============================================== */}
 
             <Drawer
                 variant="permanent"
@@ -158,11 +247,15 @@ function Sidebar({
                 }}
                 open
             >
+
                 {drawerContent}
+
             </Drawer>
 
 
-            {/* Mobile sidebar */}
+            {/* ==============================================
+                MOBILE SIDEBAR
+            ============================================== */}
 
             <Drawer
                 variant="temporary"
@@ -182,11 +275,16 @@ function Sidebar({
                     }
                 }}
             >
+
                 {drawerContent}
+
             </Drawer>
 
         </>
+
     );
+
 }
+
 
 export default Sidebar;
