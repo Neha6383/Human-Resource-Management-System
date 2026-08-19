@@ -495,6 +495,65 @@ const checkIn = async (req, res) => {
         const employee =
             employeeResult.rows[0];
 
+            // ==================================================
+// GET ATTENDANCE SETTINGS
+// ==================================================
+
+const settingsResult = await pool.query(
+    `
+    SELECT
+        working_start_time,
+        late_threshold_minutes
+    FROM company_settings
+    ORDER BY id
+    LIMIT 1
+    `
+);
+
+if (settingsResult.rows.length === 0) {
+
+    return res.status(500).json({
+        message: "Company attendance settings not found"
+    });
+
+}
+
+const settings = settingsResult.rows[0];
+
+// ==================================================
+// CALCULATE LATE THRESHOLD
+// ==================================================
+
+const [hours, minutes] =
+    settings.working_start_time
+        .split(":")
+        .map(Number);
+
+const workingStartMinutes =
+    (hours * 60) + minutes;
+
+const lateThresholdMinutes =
+    workingStartMinutes +
+    Number(settings.late_threshold_minutes);
+
+    // ==================================================
+// GET CURRENT TIME
+// ==================================================
+
+const now = new Date();
+
+const currentMinutes =
+    (now.getHours() * 60) +
+    now.getMinutes();
+
+    // ==================================================
+// DETERMINE ATTENDANCE STATUS
+// ==================================================
+
+const attendanceStatus =
+    currentMinutes > lateThresholdMinutes
+        ? "Late"
+        : "Present";
 
         // ==================================================
         // CHECK TODAY'S ATTENDANCE
@@ -557,7 +616,7 @@ const checkIn = async (req, res) => {
                 $1,
                 CURRENT_DATE,
                 CURRENT_TIMESTAMP,
-                'Present',
+                $2,
                 CURRENT_TIMESTAMP,
                 CURRENT_TIMESTAMP
             )
@@ -572,7 +631,9 @@ const checkIn = async (req, res) => {
                 created_at,
                 updated_at;
             `,
-            [employee.id]
+            [employee.id,
+                attendanceStatus
+            ]
         );
 
 
